@@ -1,4 +1,5 @@
-const express = require('express')
+const express = require('express');
+const cors = require('cors');
 
 class Server {
     
@@ -33,7 +34,7 @@ class Server {
           })
 
           this.app.post('/api', (req, res) => {
-            res.json({
+            res.status(201).json({
                 
                 ok: true,
                 msg: 'post API'
@@ -54,6 +55,7 @@ class Server {
     middlewares(){
         //directorio público
         this.app.use(express.static("public"));
+        this.app.use(cors())
 
     }
 
