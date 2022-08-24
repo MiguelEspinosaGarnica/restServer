@@ -1,1 +1,3 @@
-Este proyecto se basa en la creación de un rest server para todo tipo de peticiones
+# WebServer + RestServer
+
+REcuerden que deben ejecutar ```npm install``` para reconstruir los modulos de node
