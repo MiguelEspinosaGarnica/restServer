@@ -4,7 +4,6 @@ const bcryptjs = require("bcryptjs");
 
 const User = require("../models/user");
 
-
 const getUser = (req = request, res = response) => {
 
     const {q, name = "no name", page = 1} = req.query;
@@ -34,11 +33,18 @@ const getUser = (req = request, res = response) => {
 
   const postUser = async (req, res) => {
 
+  
     const {name, password, email, role, ...rest} = req.body;
     const user = new User({name, password, email, role});  
 
     //Verificar si el correo existe
-    
+    const existEmail = await User.findOne({ email });
+
+    if ( existEmail ){
+      return res.status(400).json({
+        msg: 'El correo ya esta registrado'
+      });
+    }
 
     //Encriptar la contraseña
     const salt = bcryptjs.genSaltSync(10);
@@ -46,8 +52,7 @@ const getUser = (req = request, res = response) => {
 
 
   //Guardar en base de datos
-    await user.save(); 
-    delete user.password;
+    await user.save();
 
     res.json({
          
