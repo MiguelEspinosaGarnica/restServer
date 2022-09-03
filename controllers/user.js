@@ -18,14 +18,26 @@ const getUser = (req = request, res = response) => {
     });
   } 
 
- const putUser = (req, res) => {
+ const putUser = async (req, res) => {
 
     const id = req.params.id;
+
+    const { password, google, email, ...rest} = req.body;
+
+
+    //TODO Validar contra base de datos
+    if( password ){
+      const salt = bcryptjs.genSaltSync(10);
+      rest.password = bcryptjs.hashSync(password, salt);
+    }
+
+    const user = await User.findByIdAndUpdate( id, rest, {new: true} );
+
     res.json({
         
         ok: true,
-        msg: 'put API',
-        id
+        msg: 'Usuario actualizado con exito',
+        user
 
     });
   }
@@ -38,13 +50,7 @@ const getUser = (req = request, res = response) => {
     const user = new User({name, password, email, role});  
 
     //Verificar si el correo existe
-    const existEmail = await User.findOne({ email });
-
-    if ( existEmail ){
-      return res.status(400).json({
-        msg: 'El correo ya esta registrado'
-      });
-    }
+    
 
     //Encriptar la contraseña
     const salt = bcryptjs.genSaltSync(10);
