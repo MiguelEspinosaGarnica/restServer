@@ -4,7 +4,7 @@ const { check } = require("express-validator");
 
 
 const { validarCampos } = require("../middlewares/field-Validator");
-const { isValidRole, doesEmailExist } = require("../helpers/db-validators");
+const { isValidRole, doesEmailExist, doesUserExist } = require("../helpers/db-validators");
 
 const { getUser, postUser, deleteUser, putUser } = require("../controllers/user");
 
@@ -13,8 +13,17 @@ const { getUser, postUser, deleteUser, putUser } = require("../controllers/user"
 const router = Router();
 
 
-router.get('/', getUser);
-router.put('/update/:id', putUser);
+router.get('/get/', [
+    check("limit", "No es un numero").isNumeric(),
+    check("from", "No es un numero").isNumeric(),
+    validarCampos
+], getUser);
+router.put('/update/:id', [
+    check("id", "no es un id valido").isMongoId(),
+    check("id").custom(doesUserExist),
+    check('role').optional().custom( isValidRole ),
+    validarCampos
+],putUser);
 router.post('/create', [
     check('email', 'El correo no es valido').isEmail(),
     check('name', 'El nombre no es obligatorio').not().isEmpty(),

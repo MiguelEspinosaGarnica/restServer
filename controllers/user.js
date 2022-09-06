@@ -4,17 +4,19 @@ const bcryptjs = require("bcryptjs");
 
 const User = require("../models/user");
 
-const getUser = (req = request, res = response) => {
+const getUser = async (req = request, res = response) => {
 
-    const {q, name = "no name", page = 1} = req.query;
+    const {q, name = "no name", page = 1, limit = 5, from = 0} = req.query;
+    
+
+    const users = await User.find()
+    .skip(from)
+    .limit(limit, from);
     res.json({
         
         ok: true,
-        msg: 'get API - controlador',
-        q,
-        name,
-        page
-
+        msg: 'Usuarios guardados',
+        users
     });
   } 
 
@@ -22,7 +24,7 @@ const getUser = (req = request, res = response) => {
 
     const id = req.params.id;
 
-    const { password, google, email, ...rest} = req.body;
+    const { _id, password, google, email, ...rest} = req.body;
 
 
     //TODO Validar contra base de datos
