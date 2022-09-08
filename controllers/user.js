@@ -8,15 +8,23 @@ const getUser = async (req = request, res = response) => {
 
     const {q, name = "no name", page = 1, limit = 5, from = 0} = req.query;
     
-
-    const users = await User.find()
-    .skip(from)
-    .limit(limit, from);
+    const [ total, users ] = await Promise.all([ 
+      User.countDocuments( { estado: true} ),
+      User.find( { estado: true} )
+          .skip(from)
+          .limit(limit),
+      
+    ])
+    const usersCounted = users.length;
+  
     res.json({
         
         ok: true,
         msg: 'Usuarios guardados',
+        usersCounted,
+        total,
         users
+
     });
   } 
 
