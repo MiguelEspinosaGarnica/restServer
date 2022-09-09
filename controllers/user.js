@@ -9,8 +9,8 @@ const getUser = async (req = request, res = response) => {
     const {q, name = "no name", page = 1, limit = 5, from = 0} = req.query;
     
     const [ total, users ] = await Promise.all([ 
-      User.countDocuments( { estado: true} ),
-      User.find( { estado: true} )
+      User.countDocuments( { status: true} ),
+      User.find( { status: true} )
           .skip(from)
           .limit(limit),
       
@@ -77,11 +77,15 @@ const getUser = async (req = request, res = response) => {
     });
   }
 
-  const deleteUser = (req, res) => {
+  const deleteUser = async (req, res) => {
+
+    const { id } = req.params;
+    const status = false;
+    const user = await User.findByIdAndUpdate( id, { status: false});
     res.json({
         
         ok: true,
-        msg: 'delete API'
+        msg: 'Usuario borrado con exito'
 
     });
   }

@@ -33,7 +33,12 @@ router.post('/create', [
     check('email').custom( doesEmailExist ),
     validarCampos
 ],postUser);
-router.delete('/', deleteUser);
+router.delete('/delete/:id', [
+    check("id", "no es un id valido").isMongoId(),
+    check("id").custom(doesUserExist),
+    validarCampos
+],
+ deleteUser);
 
 
 
